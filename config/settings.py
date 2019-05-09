@@ -16,7 +16,8 @@ import json, logging, os
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname( os.path.dirname(os.path.abspath(__file__)) )
+# BASE_DIR is the path to the project (no end-slash)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -57,11 +58,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
-template_dirs = json.loads( os.environ['ANX_ACC__TEMPLATES_JSON'] )
+# template_dirs = json.loads( os.environ['ANX_ACC__TEMPLATES_JSON'] )  # if template-directory info is complex
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': template_dirs,
+        'DIRS': [ '%s/annex_accession_app' % BASE_DIR ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
