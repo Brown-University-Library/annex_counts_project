@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import datetime, json, logging, os, pprint
+# from annex_accession_app.lib.shib_auth import shib_login  # decorator
 from . import settings_app
 from annex_accession_app.lib import view_info_helper
-# from annex_accession_app.lib.shib_auth import shib_login  # decorator
+from annex_accession_app.lib.stats import StatsBuilder
 from django.conf import settings as project_settings
 from django.contrib.auth import logout
 from django.core.urlresolvers import reverse
@@ -12,11 +13,23 @@ from django.shortcuts import get_object_or_404, render
 
 
 log = logging.getLogger(__name__)
+stats_builder = StatsBuilder()
 
 
 def stats( request ):
-    """ Runs query & returns results. """
+    """ Prepares stats for given dates; returns json. """
     return HttpResponse( 'stats coming' )
+    log.debug( 'request.__dict__, ```%s```' % pprint.pformat(request.__dict__) )
+    ## grab & validate params
+    if stats_builder.check_params( request.GET, request.scheme, request.META['HTTP_HOST'] ) == False:
+        return HttpResponseBadRequest( stats_builder.output, content_type=u'application/javascript; charset=utf-8' )
+    ## query records for period (parse them via source)
+    requests = stats_builder.run_query()
+    ## process results
+    data = stats_builder.process_results( requests )
+    ## build response
+    stats_builder.build_response( data, request.scheme, request.META['HTTP_HOST'], request.GET )
+    return HttpResponse( stats_builder.output, content_type=u'application/javascript; charset=utf-8' )
 
 
 def info( request ):
