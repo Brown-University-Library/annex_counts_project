@@ -14,6 +14,11 @@ from django.shortcuts import get_object_or_404, render
 log = logging.getLogger(__name__)
 
 
+def stats( request ):
+    """ Runs query & returns results. """
+    return HttpResponse( 'stats coming' )
+
+
 def info( request ):
     """ Returns basic data including branch & commit. """
     # log.debug( 'request.__dict__, ```%s```' % pprint.pformat(request.__dict__) )
