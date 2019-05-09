@@ -2,7 +2,7 @@
 
 """ Manages db query & response. """
 
-import datetime, json, logging, pprint
+import datetime, json, logging, pprint, random
 from django.core.urlresolvers import reverse
 
 
@@ -32,12 +32,15 @@ class StatsBuilder( object ):
 
 
 
-    def generate_dummy_output( self ):
+    def generate_dummy_output( self, get_params, scheme, host, stopwatch_start ):
         """ Temp output generator.
             Called by views.stats() """
-        jdct = self.output
-        log.debug( 'jdct, ```%s```' % pprint.pformat(jdct) )
-        jsn = json.dumps( jdct, sort_keys=True, indent=2 )
+        self.output_dct['request']['timestamp'] = str( stopwatch_start )
+        self.output_dct['request']['url'] = '%s://%s%s%s' % ( scheme, host, reverse('stats_url'), self._prep_querystring(get_params) )
+        self.output_dct['response']['count_detail']['Annex_Hay'] = random.randint( 1000, 9999 )
+        self.output_dct['response']['elapsed_time'] = str( datetime.datetime.now() - stopwatch_start )
+        log.debug( 'jdct, ```%s```' % pprint.pformat(self.output_dct) )
+        jsn = json.dumps( self.output_dct, sort_keys=True, indent=2 )
         return jsn
 
 

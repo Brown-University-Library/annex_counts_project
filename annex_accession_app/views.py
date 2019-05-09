@@ -30,12 +30,16 @@ def stats( request ):
     if stats_builder.check_params( request.GET, request.scheme, request.META['HTTP_HOST'], rq_now ) == False:
         return HttpResponseBadRequest( stats_builder.output_jsn, content_type=u'application/javascript; charset=utf-8' )
     ## query records for period (parse them via source)
-    requests = stats_builder.run_query()
+    # requests = stats_builder.run_query()
     ## process results
-    data = stats_builder.process_results( requests )
+    # data = stats_builder.process_results( requests )
+
+    jsn_data = stats_builder.generate_dummy_output( request.GET, request.scheme, request.META['HTTP_HOST'], rq_now )
+    return HttpResponse( jsn_data, content_type=u'application/javascript; charset=utf-8' )
+
     ## build response
-    stats_builder.build_response( data, request.scheme, request.META['HTTP_HOST'], request.GET )
-    return HttpResponse( stats_builder.output, content_type=u'application/javascript; charset=utf-8' )
+    # stats_builder.build_response( data, request.scheme, request.META['HTTP_HOST'], request.GET )
+    # return HttpResponse( stats_builder.output, content_type=u'application/javascript; charset=utf-8' )
 
 
 def info( request ):
