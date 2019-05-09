@@ -37,8 +37,14 @@ class StatsBuilder( object ):
             Called by views.stats() """
         self.output_dct['request']['timestamp'] = str( stopwatch_start )
         self.output_dct['request']['url'] = '%s://%s%s%s' % ( scheme, host, reverse('stats_url'), self._prep_querystring(get_params) )
-        self.output_dct['response']['count_detail']['Annex_Hay'] = random.randint( 1000, 9999 )
+        for key in [ 'Annex_Hay', 'Annex_NonHay', 'Hay', 'NonHay' ]:
+            self.output_dct['response']['count_detail'][key] = random.randint( 1000, 9999 )
         self.output_dct['response']['elapsed_time'] = str( datetime.datetime.now() - stopwatch_start )
+        self.output_dct['response']['count_total'] = 0
+        for key in [ 'Annex_Hay', 'Annex_NonHay', 'Hay', 'NonHay' ]:
+            self.output_dct['response']['count_total'] += self.output_dct['response']['count_detail'][key]
+        self.output_dct['response']['datetime_begin'] = self.date_start
+        self.output_dct['response']['datetime_end'] = self.date_end
         log.debug( 'jdct, ```%s```' % pprint.pformat(self.output_dct) )
         jsn = json.dumps( self.output_dct, sort_keys=True, indent=2 )
         return jsn
