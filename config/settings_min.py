@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     # 'django.contrib.sessions',
     'django.contrib.messages',
     # 'django.contrib.staticfiles',
-    'app_x',
+    'annex_accession_app',
 ]
 
 MIDDLEWARE = [
@@ -169,7 +169,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'app_x': {
+        'annex_accession_app': {
             'handlers': ['logfile', 'console'],
             'level': os.environ.get(u'DJANGO_TEMPLATE__LOG_LEVEL'),
             'propagate': False
