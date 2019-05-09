@@ -18,8 +18,12 @@ stats_builder = StatsBuilder()
 
 def stats( request ):
     """ Prepares stats for given dates; returns json. """
-    return HttpResponse( 'stats coming' )
+    # return HttpResponse( 'stats coming' )
+
     log.debug( 'request.__dict__, ```%s```' % pprint.pformat(request.__dict__) )
+    dummy_output = stats_builder.generate_dummy_output()
+    return HttpResponse( dummy_output, content_type='application/javascript; charset=utf-8' )
+
     ## grab & validate params
     if stats_builder.check_params( request.GET, request.scheme, request.META['HTTP_HOST'] ) == False:
         return HttpResponseBadRequest( stats_builder.output, content_type=u'application/javascript; charset=utf-8' )

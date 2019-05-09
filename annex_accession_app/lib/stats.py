@@ -2,7 +2,7 @@
 
 """ Manages db query & response. """
 
-import logging
+import json, logging, pprint
 
 
 log = logging.getLogger(__name__)
@@ -14,7 +14,32 @@ class StatsBuilder( object ):
     def __init__( self ):
         self.date_start = None  # set by check_params()
         self.date_end = None  # set by check_params()
-        self.output = None  # set by check_params() or...
+        self.output = {
+            'request': {
+                'timestamp': '',
+                'url': '',
+                },
+            'response': {
+                'count_total': '',
+                'count_detail': { 'Annex_Hay': '', 'Annex_NonHay': '', 'Hay': '', 'NonHay': '' },
+                'datetime_begin': '',
+                'datetime_end': '',
+                'elapsed_time': ''
+                }
+            }
+
+
+
+    def generate_dummy_output( self ):
+        """ Temp output generator.
+            Called by views.stats() """
+        jdct = self.output
+        log.debug( 'jdct, ```%s```' % pprint.pformat(jdct) )
+        jsn = json.dumps( jdct, sort_keys=True, indent=2 )
+        return jsn
+
+
+
 
     def check_params( self, get_params, scheme, host ):
         """ Checks parameters; returns boolean.
