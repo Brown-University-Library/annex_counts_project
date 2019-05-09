@@ -8,7 +8,7 @@ from annex_accession_app.lib.stats import StatsBuilder
 from django.conf import settings as project_settings
 from django.contrib.auth import logout
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 
 
@@ -21,12 +21,14 @@ def stats( request ):
     # return HttpResponse( 'stats coming' )
 
     log.debug( 'request.__dict__, ```%s```' % pprint.pformat(request.__dict__) )
-    dummy_output = stats_builder.generate_dummy_output()
-    return HttpResponse( dummy_output, content_type='application/javascript; charset=utf-8' )
+    rq_now = datetime.datetime.now()
+
+    # dummy_output = stats_builder.generate_dummy_output()
+    # return HttpResponse( dummy_output, content_type='application/javascript; charset=utf-8' )
 
     ## grab & validate params
-    if stats_builder.check_params( request.GET, request.scheme, request.META['HTTP_HOST'] ) == False:
-        return HttpResponseBadRequest( stats_builder.output, content_type=u'application/javascript; charset=utf-8' )
+    if stats_builder.check_params( request.GET, request.scheme, request.META['HTTP_HOST'], rq_now ) == False:
+        return HttpResponseBadRequest( stats_builder.output_jsn, content_type=u'application/javascript; charset=utf-8' )
     ## query records for period (parse them via source)
     requests = stats_builder.run_query()
     ## process results

@@ -2,7 +2,8 @@
 
 """ Manages db query & response. """
 
-import json, logging, pprint
+import datetime, json, logging, pprint
+from django.core.urlresolvers import reverse
 
 
 log = logging.getLogger(__name__)
@@ -14,7 +15,7 @@ class StatsBuilder( object ):
     def __init__( self ):
         self.date_start = None  # set by check_params()
         self.date_end = None  # set by check_params()
-        self.output = {
+        self.output_dct = {
             'request': {
                 'timestamp': '',
                 'url': '',
@@ -27,6 +28,7 @@ class StatsBuilder( object ):
                 'elapsed_time': ''
                 }
             }
+        self.output_jsn = ''
 
 
 
@@ -41,12 +43,12 @@ class StatsBuilder( object ):
 
 
 
-    def check_params( self, get_params, scheme, host ):
+    def check_params( self, get_params, scheme, host, stopwatch_start ):
         """ Checks parameters; returns boolean.
             Called by views.stats_v1() """
         log.debug( 'get_params, `%s`' % get_params )
         if 'start_date' not in get_params or 'end_date' not in get_params:  # not valid
-            self._handle_bad_params( scheme, host, get_params )
+            self._handle_bad_params( scheme, host, get_params, stopwatch_start )
             return False
         else:  # valid
             self.date_start = '%s 00:00:00' % get_params['start_date']
@@ -99,18 +101,32 @@ class StatsBuilder( object ):
         self.output = json.dumps( jdict, sort_keys=True, indent=2 )
         return
 
-    def _handle_bad_params( self, scheme, host, get_params ):
+    # def _handle_bad_params( self, scheme, host, get_params ):
+    #     """ Prepares bad-parameters data.
+    #         Called by check_params() """
+    #     data = {
+    #         'request': {
+    #             'date_time': str( datetime.datetime.now() ),
+    #             'url': '%s://%s%s%s' % ( scheme, host, reverse('stats_url'), self._prep_querystring(get_params) ) },
+    #         'response': {
+    #             'status': '400 / Bad Request',
+    #             'message': 'example url: %s://%s%s?start_date=2018-07-01&end_date=2018-07-31' % ( scheme, host, reverse('stats_url') ) }
+    #         }
+    #     self.output = json.dumps( data, sort_keys=True, indent=2 )
+    #     return
+
+    def _handle_bad_params( self, scheme, host, get_params, stopwatch_start ):
         """ Prepares bad-parameters data.
             Called by check_params() """
-        data = {
-            'request': {
-                'date_time': str( datetime.datetime.now() ),
-                'url': '%s://%s%s%s' % ( scheme, host, reverse('stats_url'), self._prep_querystring(get_params) ) },
-            'response': {
-                'status': '400 / Bad Request',
-                'message': 'example url: %s://%s%s?start_date=2018-07-01&end_date=2018-07-31' % ( scheme, host, reverse('stats_url') ) }
-            }
-        self.output = json.dumps( data, sort_keys=True, indent=2 )
+        self.output_dct['request']['timestamp'] = str( stopwatch_start )
+        self.output_dct['request']['url'] = '%s://%s%s%s' % ( scheme, host, reverse('stats_url'), self._prep_querystring(get_params) )
+        self.output_dct['response']['status'] = '400 / Bad Request'
+        self.output_dct['response']['message'] = 'example url: %s://%s%s?start_date=2019-01-01&end_date=2019-01-31' % ( scheme, host, reverse('stats_url') )
+        self.output_dct['response']['elapsed_time'] = str( datetime.datetime.now() - stopwatch_start )
+        for key in [ 'count_detail', 'count_total', 'datetime_begin', 'datetime_end' ]:
+            del( self.output_dct['response'][key] )
+        log.debug( 'self.output_dct after bad-param-handling, ```%s```' % pprint.pformat(self.output_dct) )
+        self.output_jsn = json.dumps( self.output_dct, sort_keys=True, indent=2 )
         return
 
     def _prep_querystring( self, get_params ):
