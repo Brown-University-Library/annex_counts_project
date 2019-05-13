@@ -22,13 +22,14 @@ class StatsBuilder( object ):
                 },
             'response': {
                 'count_total': '',
-                'count_detail': { 'Annex_Hay': '', 'Annex_NonHay': '', 'Hay': '', 'NonHay': '' },
-                'datetime_begin': '',
-                'datetime_end': '',
+                'count_detail': { 'Hay_Accessions': '', 'Hay_Refiles': '', 'Non-Hay_Accessions': '', 'Non-Hay_Refiles': '' },
+                'period_begin_timestamp': '',
+                'period_end_timestamp': '',
                 'elapsed_time': ''
                 }
             }
         self.output_jsn = ''
+
 
 
 
@@ -37,14 +38,14 @@ class StatsBuilder( object ):
             Called by views.stats() """
         self.output_dct['request']['timestamp'] = str( stopwatch_start )
         self.output_dct['request']['url'] = '%s://%s%s%s' % ( scheme, host, reverse('stats_url'), self._prep_querystring(get_params) )
-        for key in [ 'Annex_Hay', 'Annex_NonHay', 'Hay', 'NonHay' ]:
+        for key in [ 'Hay_Accessions', 'Hay_Refiles', 'Non-Hay_Accessions', 'Non-Hay_Refiles' ]:
             self.output_dct['response']['count_detail'][key] = random.randint( 1000, 9999 )
         self.output_dct['response']['elapsed_time'] = str( datetime.datetime.now() - stopwatch_start )
         self.output_dct['response']['count_total'] = 0
-        for key in [ 'Annex_Hay', 'Annex_NonHay', 'Hay', 'NonHay' ]:
+        for key in [ 'Hay_Accessions', 'Hay_Refiles', 'Non-Hay_Accessions', 'Non-Hay_Refiles' ]:
             self.output_dct['response']['count_total'] += self.output_dct['response']['count_detail'][key]
-        self.output_dct['response']['datetime_begin'] = self.date_start
-        self.output_dct['response']['datetime_end'] = self.date_end
+        self.output_dct['response']['period_begin_timestamp'] = self.date_start
+        self.output_dct['response']['period_end_timestamp'] = self.date_end
         log.debug( 'jdct, ```%s```' % pprint.pformat(self.output_dct) )
         jsn = json.dumps( self.output_dct, sort_keys=True, indent=2 )
         return jsn
@@ -110,20 +111,6 @@ class StatsBuilder( object ):
         self.output = json.dumps( jdict, sort_keys=True, indent=2 )
         return
 
-    # def _handle_bad_params( self, scheme, host, get_params ):
-    #     """ Prepares bad-parameters data.
-    #         Called by check_params() """
-    #     data = {
-    #         'request': {
-    #             'date_time': str( datetime.datetime.now() ),
-    #             'url': '%s://%s%s%s' % ( scheme, host, reverse('stats_url'), self._prep_querystring(get_params) ) },
-    #         'response': {
-    #             'status': '400 / Bad Request',
-    #             'message': 'example url: %s://%s%s?start_date=2018-07-01&end_date=2018-07-31' % ( scheme, host, reverse('stats_url') ) }
-    #         }
-    #     self.output = json.dumps( data, sort_keys=True, indent=2 )
-    #     return
-
     def _handle_bad_params( self, scheme, host, get_params, stopwatch_start ):
         """ Prepares bad-parameters data.
             Called by check_params() """
@@ -132,7 +119,7 @@ class StatsBuilder( object ):
         self.output_dct['response']['status'] = '400 / Bad Request'
         self.output_dct['response']['message'] = 'example url: %s://%s%s?start_date=2019-01-01&end_date=2019-01-31' % ( scheme, host, reverse('stats_url') )
         self.output_dct['response']['elapsed_time'] = str( datetime.datetime.now() - stopwatch_start )
-        for key in [ 'count_detail', 'count_total', 'datetime_begin', 'datetime_end' ]:
+        for key in [ 'count_detail', 'count_total', 'period_begin_timestamp', 'period_end_timestamp' ]:
             del( self.output_dct['response'][key] )
         log.debug( 'self.output_dct after bad-param-handling, ```%s```' % pprint.pformat(self.output_dct) )
         self.output_jsn = json.dumps( self.output_dct, sort_keys=True, indent=2 )
