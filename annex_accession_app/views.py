@@ -13,7 +13,6 @@ from django.shortcuts import get_object_or_404, render
 
 
 log = logging.getLogger(__name__)
-stats_builder = StatsBuilder()
 
 
 def stats( request ):
@@ -22,6 +21,8 @@ def stats( request ):
 
     log.debug( 'request.__dict__, ```%s```' % pprint.pformat(request.__dict__) )
     rq_now = datetime.datetime.now()
+
+    stats_builder = StatsBuilder()
 
     # dummy_output = stats_builder.generate_dummy_output()
     # return HttpResponse( dummy_output, content_type='application/javascript; charset=utf-8' )
