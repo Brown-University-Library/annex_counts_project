@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import datetime, json, logging, os, pprint
-# from annex_accession_app.lib.shib_auth import shib_login  # decorator
+# from annex_counts_app.lib.shib_auth import shib_login  # decorator
 from . import settings_app
-from annex_accession_app.lib import view_info_helper
-from annex_accession_app.lib.stats import StatsBuilder
+from annex_counts_app.lib import view_info_helper
+from annex_counts_app.lib.stats import StatsBuilder
 from django.conf import settings as project_settings
 from django.contrib.auth import logout
 from django.core.urlresolvers import reverse

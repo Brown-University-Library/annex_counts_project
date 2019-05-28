@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime, json, logging, os, subprocess
-from annex_accession_app import settings_app
+from annex_counts_app import settings_app
 from django.conf import settings
 # from django.core.urlresolvers import reverse
 

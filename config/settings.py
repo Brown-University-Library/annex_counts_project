@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'annex_accession_app',
+    'annex_counts_app',
 ]
 
 MIDDLEWARE = [
@@ -62,7 +62,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ '%s/annex_accession_app' % BASE_DIR ],
+        'DIRS': [ '%s/annex_counts_app' % BASE_DIR ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -178,7 +178,7 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
             },
-        'annex_accession_app': {
+        'annex_counts_app': {
             # 'handlers': ['logfile', 'console'],  # leaving here as reminder that this is how to show output in the terminal
             'handlers': ['logfile'],
             'level': os.environ.get(u'ANX_ACC__LOG_LEVEL'),

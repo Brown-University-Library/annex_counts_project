@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('annex_accession_app', '0001_initial'),
+        ('annex_counts_app', '0001_initial'),
     ]
 
     operations = [
