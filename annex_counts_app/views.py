@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import datetime, json, logging, os, pprint
+from typing import Tuple
+
 # from annex_counts_app.lib.shib_auth import shib_login  # decorator
 from . import settings_app
 from annex_counts_app.lib import updater as updt_hlpr
@@ -46,13 +48,17 @@ def stats( request ):
 
 def updater( request ):
     """ Updates stats db. """
-    log.debug( 'request.__dict__, ```%s```' % pprint.pformat(request.__dict__) )
+    # log.debug( 'request.POST, ```%s```' % pprint.pformat(request.POST) )
+    log.debug( f'request.POST, ```{pprint.pformat(request.POST)}```' )
     if updt_hlpr.check_validity( request ) is False:
         return HttpResponseBadRequest( '400 / Bad Request' )
-    foo = updt_hlpr.prep_counts( request )
+    # foo = updt_hlpr.prep_counts( request )
     # ( dt: datetime.date, hay_accessions: int, hay_refiles: int, non_hay_accessions: int, non_hay_refiles: int ) = updt_hlpr.prep_counts( request )
-    ( dt, hay_accessions, hay_refiles, non_hay_accessions, non_hay_refiles ) = updt_hlpr.prep_counts( request )
-
+    # ( dt, hay_accessions, hay_refiles, non_hay_accessions, non_hay_refiles ) = updt_hlpr.prep_counts( request )
+    params: Tuple[datetime.date, int, int, int] = updt_hlpr.prep_counts( request )
+    ( dt, hay_accessions, hay_refiles, non_hay_accessions, non_hay_refiles ) = params.range(4)
+    log.debug( f'dt, ```{dt}```'  )
+    return HttpResponse( 'coming' )
 
 # -------
 # helpers
