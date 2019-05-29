@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 log.info( 'log started' )
 
 
-SOURCE_DIR_PATH = os.environ['ANX_ACC__SOURCE_DIR_PATH']
+SOURCE_DIR_PATH = os.environ['ANX_COUNTS__SOURCE_DIR_PATH']
 
 
 def manage_update():
