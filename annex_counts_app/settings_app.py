@@ -5,6 +5,9 @@ import json, os
 
 README_URL = os.environ['ANX_COUNTS__README_URL']
 
+API_AUTH_KEY = os.environ['ANX_COUNTS__API_AUTH_KEY']
+
+
 ## auth
 # SUPER_USERS = json.loads( os.environ['ANX_COUNTS__UPER_USERS_JSON'] )
 # STAFF_USERS = json.loads( os.environ['ANX_COUNTS__STAFF_USERS_JSON'] )  # users permitted access to admin

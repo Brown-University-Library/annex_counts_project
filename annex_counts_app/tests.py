@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import datetime, logging
+
+from . import settings_app
 from django.test import TestCase
 # from django.test import SimpleTestCase as TestCase    ## TestCase requires db, so if you're not using a db, and want tests, try this
 
@@ -15,6 +17,7 @@ class ClientTest( TestCase ):
     def test_good_post(self):
         """ Checks happy-path handling. """
         params = {
+            'auth_key': settings_app.API_AUTH_KEY,
             'date': str( datetime.date.today() ),
             'hay_accessions': '1',
             'hay_refiles': '2',
