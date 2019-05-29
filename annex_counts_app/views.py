@@ -52,17 +52,16 @@ def updater( request ):
     log.debug( f'request.POST, ```{pprint.pformat(request.POST)}```' )
     if updt_hlpr.check_validity( request ) is False:
         return HttpResponseBadRequest( '400 / Bad Request' )
-    # foo = updt_hlpr.prep_counts( request )
-    # ( dt: datetime.date, hay_accessions: int, hay_refiles: int, non_hay_accessions: int, non_hay_refiles: int ) = updt_hlpr.prep_counts( request )
-    # ( dt, hay_accessions, hay_refiles, non_hay_accessions, non_hay_refiles ) = updt_hlpr.prep_counts( request )
-    params: Tuple[datetime.date, int, int, int] = updt_hlpr.prep_counts( request )
-    ( dt, hay_accessions, hay_refiles, non_hay_accessions, non_hay_refiles ) = params.range(4)
-    log.debug( f'dt, ```{dt}```'  )
-    return HttpResponse( 'coming' )
+    data: dict = updt_hlpr.prep_counts( request )
+    updt_hlpr.update_db( data )
+    # log.debug( f'dt, ```{dt}```'  )
+    return HttpResponse( '200 / OK' )
+
 
 # -------
 # helpers
 # -------
+
 
 def info( request ):
     """ Returns basic data including branch & commit. """
