@@ -22,7 +22,7 @@ class ClientTest( TestCase ):
             'non_hay_refiles': '4'
         }
         response = self.client.post( '/updater/', params )
-        self.assertEqual( 1, 2 )
+        self.assertEqual( 200, response.status_code )
 
     ## end class ClientTest()
 
