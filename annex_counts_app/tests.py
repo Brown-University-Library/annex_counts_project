@@ -1,12 +1,30 @@
 # -*- coding: utf-8 -*-
 
-import logging
+import datetime, logging
 from django.test import TestCase
 # from django.test import SimpleTestCase as TestCase    ## TestCase requires db, so if you're not using a db, and want tests, try this
 
 
 log = logging.getLogger(__name__)
 TestCase.maxDiff = None
+
+
+class ClientTest( TestCase ):
+    """ Checks urls. """
+
+    def test_good_post(self):
+        """ Checks happy-path handling. """
+        params = {
+            'date': str( datetime.date.today() ),
+            'hay_accessions': '1',
+            'hay_refiles': '2',
+            'non_hay_accessions': '3',
+            'non_hay_refiles': '4'
+        }
+        response = self.client.post( '/updater/', params )
+        self.assertEqual( 1, 2 )
+
+    ## end class ClientTest()
 
 
 class RootUrlTest( TestCase ):
