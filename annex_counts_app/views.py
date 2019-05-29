@@ -5,9 +5,10 @@ from typing import Tuple
 
 # from annex_counts_app.lib.shib_auth import shib_login  # decorator
 from . import settings_app
-from annex_counts_app.lib import updater as updt_hlpr
+from annex_counts_app.lib import updater as update_helper
 from annex_counts_app.lib import view_info_helper
 from annex_counts_app.lib.stats import StatsBuilder
+from annex_counts_app.lib.updater import Validator
 from django.conf import settings as project_settings
 from django.contrib.auth import logout
 from django.core.urlresolvers import reverse
@@ -48,13 +49,12 @@ def stats( request ):
 
 def updater( request ):
     """ Updates stats db. """
-    # log.debug( 'request.POST, ```%s```' % pprint.pformat(request.POST) )
     log.debug( f'request.POST, ```{pprint.pformat(request.POST)}```' )
-    if updt_hlpr.check_validity( request ) is False:
+    validator = Validator()
+    if validator.check_validity( request ) is False:
         return HttpResponseBadRequest( '400 / Bad Request' )
-    data: dict = updt_hlpr.prep_counts( request )
-    updt_hlpr.update_db( data )
-    # log.debug( f'dt, ```{dt}```'  )
+    data: dict = update_helper.prep_counts( request )
+    update_helper.update_db( data )
     return HttpResponse( '200 / OK' )
 
 
