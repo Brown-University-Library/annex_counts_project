@@ -67,6 +67,7 @@ class Validator:
             Called by check_validity() """
         def_check: bool = False
         loop_check: str = 'init'
+        key: str
         for key in self.required_keys:
             if len( req_post[key] ) == 0:
                 loop_check = 'fail'
