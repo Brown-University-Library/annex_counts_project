@@ -3,6 +3,7 @@
 import datetime, json, logging, os, pprint
 # from annex_counts_app.lib.shib_auth import shib_login  # decorator
 from . import settings_app
+from annex_counts_app.lib import updater as updt_hlpr
 from annex_counts_app.lib import view_info_helper
 from annex_counts_app.lib.stats import StatsBuilder
 from django.conf import settings as project_settings
@@ -42,6 +43,20 @@ def stats( request ):
     # stats_builder.build_response( data, request.scheme, request.META['HTTP_HOST'], request.GET )
     # return HttpResponse( stats_builder.output, content_type=u'application/javascript; charset=utf-8' )
 
+
+def updater( request ):
+    """ Updates stats db. """
+    log.debug( 'request.__dict__, ```%s```' % pprint.pformat(request.__dict__) )
+    if updt_hlpr.check_validity( request ) is False:
+        return HttpResponseBadRequest( '400 / Bad Request' )
+    foo = updt_hlpr.prep_counts( request )
+    # ( dt: datetime.date, hay_accessions: int, hay_refiles: int, non_hay_accessions: int, non_hay_refiles: int ) = updt_hlpr.prep_counts( request )
+    ( dt, hay_accessions, hay_refiles, non_hay_accessions, non_hay_refiles ) = updt_hlpr.prep_counts( request )
+
+
+# -------
+# helpers
+# -------
 
 def info( request ):
     """ Returns basic data including branch & commit. """

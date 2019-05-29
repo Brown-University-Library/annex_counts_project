@@ -11,11 +11,21 @@ admin.autodiscover()
 
 urlpatterns = [
 
+    # -------
+    # main
+    # -------
+
     # url( r'^admin/login/', RedirectView.as_view(pattern_name='login_url') ),
 
     # url( r'^admin/', admin.site.urls ),  # eg host/project_x/admin/
 
     url( r'^stats/$', views.stats, name='stats_url' ),
+
+    url( r'^updater/$', views.updater, name='updater_url' ),
+
+    # -------
+    # helpers
+    # -------
 
     url( r'^info/$', views.info, name='info_url' ),
 
