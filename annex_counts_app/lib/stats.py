@@ -50,7 +50,7 @@ class StatsBuilder( object ):
             Called by views.stats_api() """
         records = Counter.objects.filter(
             create_datetime__gte=self.date_start).filter(create_datetime__lte=self.date_end)
-        log.debug( f'type(records), ```{type(records)}```' )
+        log.debug( f'number of records, ```{len(records)}```' )
         return records
 
     def process_results( self, records ) -> dict:
@@ -77,7 +77,7 @@ class StatsBuilder( object ):
         self.output_dct['response']['period_end_timestamp'] = self.date_end
         log.debug( f'self.output_dct, ```{pprint.pformat(self.output_dct)}```' )
         jsn = json.dumps( self.output_dct, sort_keys=True, indent=2 )
-        return
+        return jsn
 
     def _handle_bad_params( self, scheme, host, get_params, stopwatch_start ):
         """ Prepares bad-parameters data.
