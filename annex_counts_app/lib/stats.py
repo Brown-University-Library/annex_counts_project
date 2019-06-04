@@ -68,8 +68,8 @@ class StatsBuilder:
         """ Builds json response.
             Called by views.() """
         self.output_dct['request']['timestamp'] = str( stopwatch_start )
-        # self.output_dct['request']['url'] = '%s://%s%s%s' % ( scheme, host, reverse('stats_url'), self._prep_querystring(get_params) )
-        self.output_dct['request']['url'] = f'{scheme}://{host}{reverse("stats_url")}{self._prep_querystring(get_params)}'
+        self.output_dct['request']['url'] = '%s://%s%s%s' % ( scheme, host, reverse('stats_url'), self._prep_querystring(get_params) )
+        # self.output_dct['request']['url'] = f'{scheme}://{host}{reverse("stats_url")}{self._prep_querystring(get_params)}'
         self.output_dct['response']['elapsed_time'] = str( datetime.datetime.now() - stopwatch_start )
         self.output_dct['response']['count_total'] = 0
         for key in [ 'Hay_Accessions', 'Hay_Refiles', 'Non-Hay_Accessions', 'Non-Hay_Refiles' ]:
