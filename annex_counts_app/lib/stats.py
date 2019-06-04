@@ -6,6 +6,7 @@ import datetime, json, logging, pprint, random
 
 from annex_counts_app.models import Counter
 from django.core.urlresolvers import reverse
+from django.db.models.query import QuerySet  # just for type-hinting
 
 
 log = logging.getLogger(__name__)
@@ -24,36 +25,13 @@ class StatsBuilder( object ):
                 },
             'response': {
                 'count_total': '',
-                'count_detail': { 'Hay_Accessions': '', 'Hay_Refiles': '', 'Non-Hay_Accessions': '', 'Non-Hay_Refiles': '' },
+                'count_detail': { 'Hay_Accessions': 0, 'Hay_Refiles': 0, 'Non-Hay_Accessions': 0, 'Non-Hay_Refiles': 0 },
                 'period_begin_timestamp': '',
                 'period_end_timestamp': '',
                 'elapsed_time': ''
                 }
             }
         self.output_jsn = ''
-
-
-
-
-    def generate_dummy_output( self, get_params, scheme, host, stopwatch_start ):
-        """ Temp output generator.
-            Called by views.stats() """
-        self.output_dct['request']['timestamp'] = str( stopwatch_start )
-        self.output_dct['request']['url'] = '%s://%s%s%s' % ( scheme, host, reverse('stats_url'), self._prep_querystring(get_params) )
-        for key in [ 'Hay_Accessions', 'Hay_Refiles', 'Non-Hay_Accessions', 'Non-Hay_Refiles' ]:
-            self.output_dct['response']['count_detail'][key] = random.randint( 1000, 9999 )
-        self.output_dct['response']['elapsed_time'] = str( datetime.datetime.now() - stopwatch_start )
-        self.output_dct['response']['count_total'] = 0
-        for key in [ 'Hay_Accessions', 'Hay_Refiles', 'Non-Hay_Accessions', 'Non-Hay_Refiles' ]:
-            self.output_dct['response']['count_total'] += self.output_dct['response']['count_detail'][key]
-        self.output_dct['response']['period_begin_timestamp'] = self.date_start
-        self.output_dct['response']['period_end_timestamp'] = self.date_end
-        log.debug( 'jdct, ```%s```' % pprint.pformat(self.output_dct) )
-        jsn = json.dumps( self.output_dct, sort_keys=True, indent=2 )
-        return jsn
-
-
-
 
     def check_params( self, get_params, scheme, host, stopwatch_start ):
         """ Checks parameters; returns boolean.
@@ -67,7 +45,7 @@ class StatsBuilder( object ):
             self.date_end = '%s 23:59:59' % get_params['end_date']
             return True
 
-    def run_query( self ):
+    def run_query( self ) -> QuerySet:
         """ Queries db.
             Called by views.stats_api() """
         records = Counter.objects.filter(
@@ -77,24 +55,14 @@ class StatsBuilder( object ):
 
     def process_results( self, records ) -> dict:
         """ Extracts desired data from resultset.
-            Called by views.stats_v1() """
-        data = {
-            'count_request_for_period': len(requests),
-            'disposition': {
-                'initial_landing': 0, 'to_aeon_via_shib': 0, 'to_aeon_directly': 0, 'back_to_josiah': 0 }
-        }
+            Called by views.stats() """
         for record in records:
-            if record.status == 'initial_landing':
-                data['disposition']['initial_landing'] += 1
-            elif record.status == 'to_aeon_via_shib':
-                data['disposition']['to_aeon_via_shib'] += 1
-            elif record.status == 'to_aeon_directly':
-                data['disposition']['to_aeon_directly'] += 1
-            elif record.status == 'back_to_josiah':
-                data['disposition']['back_to_josiah'] += 1
-            else:
-                log.error( 'unhandled record.status for shortlink, `%s`; value, `%s`' % (record.short_url_segment, record.status) )
-        return data
+            self.output_dct['response']['count_detail']['Hay_Accessions'] += record.hay_accessions
+            self.output_dct['response']['count_detail']['Hay_Refiles'] += record.hay_refiles
+            self.output_dct['response']['count_detail']['Non-Hay_Accessions'] += record.non_hay_accessions
+            self.output_dct['response']['count_detail']['Non-Hay_Refiles'] += record.non_hay_refiles
+        log.debug( f'self.output_dct, ```{pprint.pformat(self.output_dct)}```' )
+        return self.output_dct
 
     def build_response( self, data, scheme, host, get_params ):
         """ Builds json response.
@@ -136,5 +104,28 @@ class StatsBuilder( object ):
         else:
             querystring = ''
         return querystring
+
+
+
+
+    def generate_dummy_output( self, get_params, scheme, host, stopwatch_start ):
+        """ Temp output generator.
+            Called by views.stats() """
+        self.output_dct['request']['timestamp'] = str( stopwatch_start )
+        self.output_dct['request']['url'] = '%s://%s%s%s' % ( scheme, host, reverse('stats_url'), self._prep_querystring(get_params) )
+        for key in [ 'Hay_Accessions', 'Hay_Refiles', 'Non-Hay_Accessions', 'Non-Hay_Refiles' ]:
+            self.output_dct['response']['count_detail'][key] = random.randint( 1000, 9999 )
+        self.output_dct['response']['elapsed_time'] = str( datetime.datetime.now() - stopwatch_start )
+        self.output_dct['response']['count_total'] = 0
+        for key in [ 'Hay_Accessions', 'Hay_Refiles', 'Non-Hay_Accessions', 'Non-Hay_Refiles' ]:
+            self.output_dct['response']['count_total'] += self.output_dct['response']['count_detail'][key]
+        self.output_dct['response']['period_begin_timestamp'] = self.date_start
+        self.output_dct['response']['period_end_timestamp'] = self.date_end
+        log.debug( 'jdct, ```%s```' % pprint.pformat(self.output_dct) )
+        jsn = json.dumps( self.output_dct, sort_keys=True, indent=2 )
+        return jsn
+
+
+
 
     # end class StatsBuilder
