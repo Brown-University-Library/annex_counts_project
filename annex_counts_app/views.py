@@ -44,8 +44,8 @@ def stats( request ):
     # return HttpResponse( jsn_data, content_type=u'application/javascript; charset=utf-8' )
 
     ## build response
-    stats_builder.build_response( data, request.scheme, request.META['HTTP_HOST'], request.GET )
-    return HttpResponse( stats_builder.output, content_type=u'application/javascript; charset=utf-8' )
+    jsn: str = stats_builder.build_response( data, request.GET, request.scheme, request.META['HTTP_HOST'], rq_now )
+    return HttpResponse( jsn, content_type='application/javascript; charset=utf-8' )
 
 
 def updater( request ):
