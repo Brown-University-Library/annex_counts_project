@@ -17,8 +17,8 @@ class StatsBuilder:
     """ Handles stats-api queries. """
 
     def __init__( self ):
-        self.date_start = None  # set by check_params()
-        self.date_end = None  # set by check_params()
+        self.date_start = ''  # set by check_params()
+        self.date_end = ''  # set by check_params()
         self.output_dct = {
             'request': {
                 'timestamp': '',
@@ -41,8 +41,8 @@ class StatsBuilder:
             self._handle_bad_params( scheme, host, get_params, stopwatch_start )
             return False
         else:  # valid
-            self.date_start = '%s 00:00:00' % get_params['start_date']
-            self.date_end = '%s 23:59:59' % get_params['end_date']
+            self.date_start: str = f'{get_params["start_date"]} 00:00:00'
+            self.date_end: str = f'{get_params["end_date"]} 23:59:59'
             return True
 
     def run_query( self ) -> QuerySet:
@@ -61,7 +61,7 @@ class StatsBuilder:
             self.output_dct['response']['count_detail']['Hay_Refiles'] += record.hay_refiles
             self.output_dct['response']['count_detail']['Non-Hay_Accessions'] += record.non_hay_accessions
             self.output_dct['response']['count_detail']['Non-Hay_Refiles'] += record.non_hay_refiles
-        log.debug( f'self.output_dct, ```{pprint.pformat(self.output_dct)}```' )
+        log.debug( f'self.output_dct after counts prepped, ```{pprint.pformat(self.output_dct)}```' )
         return self.output_dct
 
     def build_response( self, data: dict, get_params: QueryDict, scheme: str, host: str, stopwatch_start: datetime.datetime ) -> str:
@@ -75,7 +75,7 @@ class StatsBuilder:
             self.output_dct['response']['count_total'] += self.output_dct['response']['count_detail'][key]
         self.output_dct['response']['period_begin_timestamp'] = self.date_start
         self.output_dct['response']['period_end_timestamp'] = self.date_end
-        log.debug( f'self.output_dct, ```{pprint.pformat(self.output_dct)}```' )
+        log.debug( f'final self.output_dct, ```{pprint.pformat(self.output_dct)}```' )
         jsn = json.dumps( self.output_dct, sort_keys=True, indent=2 )
         return jsn
 
