@@ -12,6 +12,7 @@ from annex_counts_app.lib.updater import Validator
 from django.conf import settings as project_settings
 from django.contrib.auth import logout
 from django.core.urlresolvers import reverse
+from django.db.models.query import QuerySet  # just for type-hinting
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 
@@ -35,7 +36,7 @@ def stats( request ):
     if stats_builder.check_params( request.GET, request.scheme, request.META['HTTP_HOST'], rq_now ) == False:
         return HttpResponseBadRequest( stats_builder.output_jsn, content_type=u'application/javascript; charset=utf-8' )
     ## query records for period (parse them via source)
-    records = stats_builder.run_query()
+    records: QuerySet = stats_builder.run_query()
     ## process results
     data: dict = stats_builder.process_results( records )
 
