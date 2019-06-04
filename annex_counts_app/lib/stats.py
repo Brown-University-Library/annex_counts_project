@@ -3,6 +3,8 @@
 """ Manages db query & response. """
 
 import datetime, json, logging, pprint, random
+
+from annex_counts_app.models import Counter
 from django.core.urlresolvers import reverse
 
 
@@ -68,11 +70,12 @@ class StatsBuilder( object ):
     def run_query( self ):
         """ Queries db.
             Called by views.stats_api() """
-        requests = ItemRequest.objects.filter(
+        records = Counter.objects.filter(
             create_datetime__gte=self.date_start).filter(create_datetime__lte=self.date_end)
-        return requests
+        log.debug( f'type(records), ```{type(records)}```' )
+        return records
 
-    def process_results( self, requests ):
+    def process_results( self, records ) -> dict:
         """ Extracts desired data from resultset.
             Called by views.stats_v1() """
         data = {
@@ -80,17 +83,17 @@ class StatsBuilder( object ):
             'disposition': {
                 'initial_landing': 0, 'to_aeon_via_shib': 0, 'to_aeon_directly': 0, 'back_to_josiah': 0 }
         }
-        for request in requests:
-            if request.status == 'initial_landing':
+        for record in records:
+            if record.status == 'initial_landing':
                 data['disposition']['initial_landing'] += 1
-            elif request.status == 'to_aeon_via_shib':
+            elif record.status == 'to_aeon_via_shib':
                 data['disposition']['to_aeon_via_shib'] += 1
-            elif request.status == 'to_aeon_directly':
+            elif record.status == 'to_aeon_directly':
                 data['disposition']['to_aeon_directly'] += 1
-            elif request.status == 'back_to_josiah':
+            elif record.status == 'back_to_josiah':
                 data['disposition']['back_to_josiah'] += 1
             else:
-                log.error( 'unhandled request.status for shortlink, `%s`; value, `%s`' % (request.short_url_segment, request.status) )
+                log.error( 'unhandled record.status for shortlink, `%s`; value, `%s`' % (record.short_url_segment, record.status) )
         return data
 
     def build_response( self, data, scheme, host, get_params ):
