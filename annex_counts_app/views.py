@@ -22,28 +22,13 @@ log = logging.getLogger(__name__)
 
 def stats( request ):
     """ Prepares stats for given dates; returns json. """
-    # return HttpResponse( 'stats coming' )
-
-    log.debug( 'request.__dict__, ```%s```' % pprint.pformat(request.__dict__) )
+    log.debug( f'request.__dict__, ```{request.__dict__}```' )
     rq_now = datetime.datetime.now()
-
     stats_builder = StatsBuilder()
-
-    # dummy_output = stats_builder.generate_dummy_output()
-    # return HttpResponse( dummy_output, content_type='application/javascript; charset=utf-8' )
-
-    ## grab & validate params
     if stats_builder.check_params( request.GET, request.scheme, request.META['HTTP_HOST'], rq_now ) == False:
         return HttpResponseBadRequest( stats_builder.output_jsn, content_type=u'application/javascript; charset=utf-8' )
-    ## query records for period (parse them via source)
     records: QuerySet = stats_builder.run_query()
-    ## process results
     data: dict = stats_builder.process_results( records )
-
-    # jsn_data = stats_builder.generate_dummy_output( request.GET, request.scheme, request.META['HTTP_HOST'], rq_now )
-    # return HttpResponse( jsn_data, content_type=u'application/javascript; charset=utf-8' )
-
-    ## build response
     jsn: str = stats_builder.build_response( data, request.GET, request.scheme, request.META['HTTP_HOST'], rq_now )
     return HttpResponse( jsn, content_type='application/javascript; charset=utf-8' )
 
