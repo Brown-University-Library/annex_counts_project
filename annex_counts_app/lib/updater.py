@@ -99,6 +99,7 @@ def update_db( data: dict ) -> None:
         Called by views.updater() """
     try:
         record = Counter.objects.get( date_key=data['date'] )
+        log.debug( 'record already exists; not created or updated' )
     except Exception as e:
         log.debug( f"record for date ```{data['date']}``` not found, message is ```{e}```; will create counter-record" )
         record = Counter(
@@ -108,6 +109,6 @@ def update_db( data: dict ) -> None:
             non_hay_accessions = data['non_hay_accessions'],
             non_hay_refiles = data['non_hay_refiles'],
         )
-    record.save()
-    log.debug( f'record created, ```{pprint.pformat(record.__dict__)}```' )
+        record.save()
+        log.debug( f'record created, ```{pprint.pformat(record.__dict__)}```' )
     return
