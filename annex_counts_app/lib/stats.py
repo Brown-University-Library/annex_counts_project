@@ -48,10 +48,21 @@ class StatsBuilder:
     def run_query( self ) -> QuerySet:
         """ Queries db.
             Called by views.stats_api() """
+        datetime_start = datetime.datetime.strptime( self.date_start, '%Y-%m-%d %H:%M:%S' ).date()
+        log.debug( f'datetime_start, `{datetime_start}`; type(), `{type(datetime_start)}`' )
+        datetime_end = datetime.datetime.strptime( self.date_end, '%Y-%m-%d %H:%M:%S' ).date()
         records = Counter.objects.filter(
-            create_datetime__gte=self.date_start).filter(create_datetime__lte=self.date_end)
+            date_key__gte=datetime_start).filter(date_key__lte=datetime_end)
         log.debug( f'number of records, ```{len(records)}```' )
         return records
+
+    # def run_query( self ) -> QuerySet:
+    #     """ Queries db.
+    #         Called by views.stats_api() """
+    #     records = Counter.objects.filter(
+    #         create_datetime__gte=self.date_start).filter(create_datetime__lte=self.date_end)
+    #     log.debug( f'number of records, ```{len(records)}```' )
+    #     return records
 
     def process_results( self, records: QuerySet ) -> dict:
         """ Extracts desired data from resultset.
