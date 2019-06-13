@@ -56,14 +56,6 @@ class StatsBuilder:
         log.debug( f'number of records, ```{len(records)}```' )
         return records
 
-    # def run_query( self ) -> QuerySet:
-    #     """ Queries db.
-    #         Called by views.stats_api() """
-    #     records = Counter.objects.filter(
-    #         create_datetime__gte=self.date_start).filter(create_datetime__lte=self.date_end)
-    #     log.debug( f'number of records, ```{len(records)}```' )
-    #     return records
-
     def process_results( self, records: QuerySet ) -> dict:
         """ Extracts desired data from resultset.
             Called by views.stats() """
