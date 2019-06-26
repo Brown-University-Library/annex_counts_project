@@ -21,7 +21,9 @@ urlpatterns = [
 
     url( r'^stats/$', views.stats, name='stats_url' ),
 
-    url( r'^updater/$', views.updater, name='updater_url' ),
+    url( r'^updater/$', views.updater, name='updater_url' ),  # normal api-usage
+
+    url( r'^replacer/$', views.replacer, name='replacer_url' ),  # for scripts replacing existing info
 
     # -------
     # helpers

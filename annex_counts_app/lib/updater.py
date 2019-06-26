@@ -91,22 +91,19 @@ def update_db( data: dict ) -> None:
     return
 
 
-## TODO: add an 'overwrite url' that will _replace_ any existing data -- to handle the updated counts.
-# def update_db( data: dict ) -> None:
-#     """ Updates data for given date.
-#         Called by views.updater() """
-#     try:
-#         record = Counter.objects.get( date_key=data['date'] )
-#         log.debug( 'record already exists; not created or updated' )
-#     except Exception as e:
-#         log.debug( f"record for date ```{data['date']}``` not found, message is ```{e}```; will create counter-record" )
-#         record = Counter(
-#             date_key = data['date'],
-#             hay_accessions = data['hay_accessions'],
-#             hay_refiles = data['hay_refiles'],
-#             non_hay_accessions = data['non_hay_accessions'],
-#             non_hay_refiles = data['non_hay_refiles'],
-#         )
-#         record.save()
-#         log.debug( f'record created, ```{pprint.pformat(record.__dict__)}```' )
-#     return
+def replace_data( data: dict ) -> None:
+    """ Updates data for given date.
+        Called by views.replacer() """
+    try:
+        record = Counter.objects.get( date_key=data['date'] )
+        log.debug( 'record already exists; will be updated' )
+    except Exception as e:
+        log.debug( f"record for date ```{data['date']}``` not found, message is ```{e}```; will create record" )
+        record = Counter()
+    record.date_key = data['date']
+    record.hay_accessions = data['hay_accessions']
+    record.hay_refiles = data['hay_refiles']
+    record.non_hay_accessions = data['non_hay_accessions']
+    record.non_hay_refiles = data['non_hay_refiles']
+    record.save()
+    return

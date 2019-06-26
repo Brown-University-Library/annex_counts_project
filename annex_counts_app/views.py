@@ -44,6 +44,20 @@ def updater( request ):
     return HttpResponse( '200 / OK' )
 
 
+def replacer( request ):
+    """ Replaces existing record, if found, with incoming data. """
+    log.debug( f'request.POST, ```{pprint.pformat(request.POST)}```' )
+    validator = Validator()
+    if validator.check_validity( request ) is False:
+        return HttpResponseBadRequest( '400 / Bad Request' )
+
+    return HttpResponse( 'implementation coming' )
+
+    data: dict = update_helper.prep_counts( request )
+    update_helper.replace_data( data )
+    return HttpResponse( '200 / OK' )
+
+
 # -------
 # helpers
 # -------
